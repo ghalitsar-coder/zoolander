@@ -42,7 +42,8 @@ public class QuizGateManager : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             diDekatGerbang = true;
-            if (!kuisSedangAktif) textPromptE.SetActive(true);
+            if (!kuisSedangAktif && !panelKalah.activeSelf && !panelMenang.activeSelf) 
+                textPromptE.SetActive(true);
         }
     }
 
@@ -52,13 +53,18 @@ public class QuizGateManager : MonoBehaviour
         {
             diDekatGerbang = false;
             textPromptE.SetActive(false);
-            if (kuisSedangAktif) ResetNyawaDanTutup();
+            
+            // Mekanisme Kalah Anda: Jika menjauh saat kuis aktif/kalah, otomatis auto-reset bersih
+            if (kuisSedangAktif || panelKalah.activeSelf) 
+            {
+                ResetNyawaDanTutup();
+            }
         }
     }
 
     void Update()
     {
-        if (diDekatGerbang && Input.GetKeyDown(KeyCode.E) && !kuisSedangAktif)
+        if (diDekatGerbang && Input.GetKeyDown(KeyCode.E) && !kuisSedangAktif && !panelKalah.activeSelf && !panelMenang.activeSelf)
         {
             MulaiKuis();
         }
@@ -117,14 +123,14 @@ public class QuizGateManager : MonoBehaviour
         }
     }
 
-    // Fungsi ini nanti disambungkan ke tombol "Main Lagi" di Panel Kalah
+    // Disambungkan ke tombol "Main Lagi" di Panel Kalah
     public void TombolTutupKalah()
     {
         if (panelKalah != null) panelKalah.SetActive(false);
         ResetNyawaDanTutup();
     }
 
-    // Fungsi ini nanti disambungkan ke tombol "Lanjut" di Panel Menang
+    // Disambungkan ke tombol "Lanjut" di Panel Menang
     public void TombolTutupMenang()
     {
         if (panelMenang != null) panelMenang.SetActive(false);
@@ -172,8 +178,11 @@ public class QuizGateManager : MonoBehaviour
         nyawa = 3; 
         indexSekarang = 0; 
         
-        if (wadahNyawa != null) wadahNyawa.SetActive(false); // Sembunyikan nyawa
+        if (wadahNyawa != null) wadahNyawa.SetActive(false);
+        if (panelKalah != null) panelKalah.SetActive(false);
         foreach (GameObject kuis in daftarKuis) { kuis.SetActive(false); }
+        
+        // Hanya munculkan prompt kembali jika setelah di-reset pemain ternyata masih berdiri di dalam area trigger
         if (diDekatGerbang && textPromptE != null) textPromptE.SetActive(true); 
 
         if (playerScript != null) playerScript.LockPlayer(false);
@@ -183,8 +192,20 @@ public class QuizGateManager : MonoBehaviour
 
     void BukaGerbang()
     {
-        ResetNyawaDanTutup();
+        kuisSedangAktif = false;
+        nyawa = 3;
+        indexSekarang = 0;
+
+        // PERBAIKAN BUG: Matikan paksa prompt E di sini agar tidak menyala kembali
+        if (textPromptE != null) textPromptE.SetActive(false); 
+
+        if (playerScript != null) playerScript.LockPlayer(false);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         if (tembokPenghalang != null) tembokPenghalang.SetActive(false); 
+        
+        // Matikan trigger sensor agar seluruh sistem kuis di gerbang ini selesai selamanya
         gameObject.SetActive(false); 
     }
 }
