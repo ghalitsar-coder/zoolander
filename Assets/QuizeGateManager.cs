@@ -4,6 +4,7 @@ using Sample;
 
 public class QuizGateManager : MonoBehaviour
 {
+    public static QuizGateManager gerbangAktif;
     [Header("UI & Gate")]
     public GameObject tembokPenghalang;
     public GameObject textPromptE;
@@ -72,6 +73,8 @@ public class QuizGateManager : MonoBehaviour
 
     void MulaiKuis()
     {
+        gerbangAktif = this; 
+
         kuisSedangAktif = true;
         textPromptE.SetActive(false);
         if (wadahNyawa != null) wadahNyawa.SetActive(true); // Munculkan nyawa
