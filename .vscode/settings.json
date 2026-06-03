@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "zoolander.slnx",
+    "dotnet.defaultSolution": "UAS.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }
