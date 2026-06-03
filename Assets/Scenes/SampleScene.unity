@@ -1781,16 +1781,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuizGateManager
   tembokPenghalang: {fileID: 2014707399}
   textPromptE: {fileID: 1457376940}
-  wadahNyawa: {fileID: 1707707250}
-  panelMenang: {fileID: 1933685161}
-  panelKalah: {fileID: 1248062775}
+  wadahNyawa: {fileID: 1901462704}
+  panelMenang: {fileID: 2032813371}
+  panelKalah: {fileID: 118516303}
   daftarKuis:
   - {fileID: 1495316101}
   - {fileID: 172171339}
   iconNyawa:
-  - {fileID: 1866204172}
-  - {fileID: 1296175170}
-  - {fileID: 54715711}
+  - {fileID: 1155736363}
+  - {fileID: 1291226417}
+  - {fileID: 911778570}
 --- !u!1 &172171339
 GameObject:
   m_ObjectHideFlags: 0
@@ -14301,7 +14301,6 @@ RectTransform:
   - {fileID: 67751449}
   - {fileID: 1468781239}
   - {fileID: 1413851604}
-  - {fileID: 1901462705}
   - {fileID: 1707707251}
   - {fileID: 2032813372}
   - {fileID: 1933685162}
@@ -14311,6 +14310,7 @@ RectTransform:
   - {fileID: 1457376941}
   - {fileID: 1495316102}
   - {fileID: 172171340}
+  - {fileID: 1901462705}
   m_Father: {fileID: 1718494016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
