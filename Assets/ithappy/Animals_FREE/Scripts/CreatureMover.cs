@@ -66,6 +66,8 @@ namespace ithappy.Animals_FREE
 
         private void Update()
         {
+            if (m_Controller == null || !m_Controller.enabled || !gameObject.activeInHierarchy) 
+        return;
             m_Movement.Move(Time.deltaTime, in m_Axis, in m_Target, m_IsRun, m_IsMoving, out var animAxis, out var isAir);
             m_Animation.Animate(in animAxis, m_IsRun ? 1f : 0f, Time.deltaTime);
         }

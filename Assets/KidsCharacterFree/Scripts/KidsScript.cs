@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video; // DITAMBAHKAN: Namespace untuk VideoPlayer
 
 namespace Sample
 {
@@ -48,13 +49,18 @@ namespace Sample
         private static readonly int SpeedParameter = Animator.StringToHash("Speed");
         private static readonly int JumpPoseParameter = Animator.StringToHash("JumpPose");
 
-    // --- Sistem Kendali UI & Canvas (Tambahan untuk Fitur Menu & Kuis) ---
+        // --- Sistem Kendali UI & Canvas (Tambahan untuk Fitur Menu & Kuis) ---
         private bool _isPlayerLocked = false;
 
         [Header("UI & Canvas Controls")]
         public GameObject mainMenuCanvas;
         public CanvasGroup mainMenuCanvasGroup;
         public float fadeDuration = 1.0f;
+        
+        [Header("Intro Video System")] // DITAMBAHKAN: Konfigurasi Video
+        public VideoPlayer introVideoPlayer; // Assign komponen VideoPlayer di sini
+        public GameObject videoScreenUI;     // Assign panel UI (RawImage) tempat video diputar
+
         void Start()
         {
             _Animator = GetComponent<Animator>();
@@ -68,9 +74,13 @@ namespace Sample
             {
                 Debug.LogError("SkinnedMeshRenderer tidak ditemukan pada " + gameObject.name);
             }
-            // --- Logika Awal Jalankan Menu (TAMBAHKAN INI) ---
+            
+            // --- Logika Awal Jalankan Menu ---
             if (mainMenuCanvas != null) mainMenuCanvas.SetActive(true);
             if (mainMenuCanvasGroup != null) mainMenuCanvasGroup.alpha = 1f;
+            
+            // Pastikan layar video mati di awal
+            if (videoScreenUI != null) videoScreenUI.SetActive(false);
             
             // Aktifkan kursor mouse untuk klik menu
             Cursor.visible = true;
@@ -383,20 +393,22 @@ namespace Sample
             }
         }
 
+        // FUNGSI YANG DIPERBARUI: Dipanggil oleh tombol "Play"
         public void StartGameFromMenu()
         {
-            // Sembunyikan kursor agar mouse kembali mengontrol kamera game 3D
+            // Sembunyikan kursor
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-            // Jalankan transisi memudar perlahan
-            StartCoroutine(FadeOutMenuCoroutine());
+            // Memulai proses pudar menu dan play video
+            StartCoroutine(FadeOutMenuAndPlayVideoCoroutine());
         }
 
-        private IEnumerator FadeOutMenuCoroutine()
+        // COROUTINE BARU: Pudar menu -> Putar Video -> Mulai Game
+        private IEnumerator FadeOutMenuAndPlayVideoCoroutine()
         {
+            // 1. Pudar Menu Utama (Fade Out)
             float elapsedTime = 0f;
-
             while (elapsedTime < fadeDuration)
             {
                 elapsedTime += Time.deltaTime;
@@ -406,10 +418,34 @@ namespace Sample
                 }
                 yield return null;
             }
-
             if (mainMenuCanvas != null) mainMenuCanvas.SetActive(false);
-            
-            // Buka kunci pergerakan karakter setelah transisi selesai
+
+            // 2. Cek apakah ada video player yang di-assign
+            if (introVideoPlayer != null && introVideoPlayer.clip != null)
+            {
+                // Munculkan layar UI untuk video
+                if (videoScreenUI != null) videoScreenUI.SetActive(true);
+                
+                // Mulai putar video
+                introVideoPlayer.Play();
+
+                // Tunggu sampai video benar-benar mulai (penting agar tidak ke-skip)
+                while (!introVideoPlayer.isPlaying)
+                {
+                    yield return null;
+                }
+
+                // Tunggu selama video berjalan
+                while (introVideoPlayer.isPlaying)
+                {
+                    yield return null;
+                }
+
+                // Matikan layar video setelah selesai
+                if (videoScreenUI != null) videoScreenUI.SetActive(false);
+            }
+
+            // 3. Setelah menu hilang (dan video selesai, jika ada), buka kunci pemain
             LockPlayer(false);
         }   
     }
